@@ -1,0 +1,27 @@
+name: Keep Hugging Face Space Alive  
+
+on:  
+  schedule:  
+    - cron: '*/30 * * * *'  
+  workflow_dispatch:  
+
+jobs:  
+  ping-space:  
+    runs-on: ubuntu-latest  
+    
+    steps:  
+    - name: Checkout repository  
+      uses: actions/checkout@v3  
+    
+    - name: Ping Hugging Face Space  
+      run: |  
+        response=$(curl -s -o /dev/null -w "%{http_code}" \
+          -H "User-Agent: GitHub Actions Ping" \
+          "https://huggingface.co/spaces/Henry010/lstm-relation-extraction")  
+        
+        if [ $response -eq 200 ]; then  
+          echo "Space is alive! Response: $response"  
+        else  
+          echo "Ping failed. Response: $response"  
+          exit 1  
+        fi
